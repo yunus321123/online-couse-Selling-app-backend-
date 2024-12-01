@@ -89,8 +89,14 @@ try {
 
 
 const logout=(req,res)=>{
+    res.cookie('token',null
+   , {secure:true,
+     maxAge:0,
+     httpOnly:true,})
 
-
+    res.status(200).json({
+        success:true,
+        message:"user logged out successfully"})
 
 
 }
@@ -99,7 +105,20 @@ const logout=(req,res)=>{
 
 
 
-const getProfile=(req,res)=>{
+const getProfile=async (req,res)=>{
+    try {
+        const userId=req.user.id;
+        const user=await User.findById(userId)
+        res.status(200).json({
+            success:true,
+            message:'user details',
+            user
+        })
+        
+    } catch (error) {
+        return next(new AppError('failed to fatch profile details',400))
+        
+    }
 
 }
 

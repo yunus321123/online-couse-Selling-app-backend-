@@ -20,16 +20,14 @@ app.use(cors({
     credentials: true // Ensure the 'credentials' property is correct
 }));
 
-app.use('/ping', (req, res) => {
-    res.send('./pong');
-});
+
 
 // Routes
-app.all('*', (req, res) => {
-    res.status(404).send("OOPS! page not found");
-});
+// app.all('*', (req, res) => {
+//     res.status(404).send("OOPS! page not found");
+// });
 
-app.use('api/v1/user',router)
+app.use('/api/v1/user',router)
 
 app.use(errorMiddleware)
 

@@ -1,12 +1,12 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
 const userSchema = new Schema({
     fullName: {
         type: "String",
         required: [true, "Name is required"],
-        minLength: [4, 'name must be at least 5 characters'],
+        minLength: [4, 'name must be at least 4 characters'],
         lowercase: true,
         trim: true
     },
@@ -37,8 +37,8 @@ const userSchema = new Schema({
         enum: ["USER", 'ADMIN'],
         default: 'USER'
     },
-    forgotPaswordToken: String,
-    forgotPasswordexpiry: Date
+    forgotPasswordToken: String,
+    forgotPasswordExpiry: Date
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
@@ -49,26 +49,24 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
-userSchema.method={
-    generateJWTToken:async()=>{
+userSchema.methods = {
+    generateJWTToken: async function() {
         return await jwt.sign(
             {
-                id:this._id,
-                email:this.email,
-                subscription:this.subscription,
-                role:this.roll
+                id: this._id,
+                email: this.email,
+                role: this.role
             },
             process.env.JWT_SECRET,
             {
-                expireIn:process.env.JWT_EXPIRY,
-
+                expiresIn: process.env.JWT_EXPIRY
             }
-        )
+        );
     },
-    comparePassword:async function(plainTextPassword){
-        return await bcrypt.compare(plainTextPassword,this.password)
+    comparePassword: async function(plainTextPassword) {
+        return await bcrypt.compare(plainTextPassword, this.password);
     }
-}
+};
 
 const User = model('User', userSchema);
 
